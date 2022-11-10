@@ -11,3 +11,61 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.artContainer {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.artCard {
+  margin: 10px;
+  width: 18em;
+}
+
+.artCard img {
+  width: 100%;
+  height: 10em;
+  object-fit: cover;
+  object-position: left top;
+}
+
+.artCard img:hover {
+
+}
+
+.imageSearchIcon {
+  font-size: 10em !important;
+}
+
+.ratingForm {
+  display: flex;
+  flex-direction: column;
+  padding: 5px 10px;
+  align-items: center;
+}
+
+.ratingForm svg {
+  cursor: pointer;
+}
+
+.ratingForm > h2 {
+  font-size: 100%;
+}
+
+.ratingForm > h3 {
+  font-size: 75%;
+}
+
+.ratingFormStars {
+  height: 5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.artCardContent {
+  height: 18em;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}

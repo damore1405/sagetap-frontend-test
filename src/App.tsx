@@ -1,91 +1,150 @@
- /* eslint-disable */
-
-import React, { useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import './App.css';
+import {Button, Card, CardHeader, CircularProgress, Input, Rating, Snackbar, Tooltip} from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
+import {ImageSearch} from "@mui/icons-material";
+import _ from "lodash";
+import {toast, Toaster} from "react-hot-toast";
 
 async function getArtwork(id: number) {
-  return fetch('https://api.artic.edu/api/v1/artworks/' + id);
+    return fetch('https://api.artic.edu/api/v1/artworks/' + id);
 }
 
 function getImageUrl(id: string) {
-  return 'https://www.artic.edu/iiif/2/' + id + '/full/843,/0/default.jpg'
+    return 'https://www.artic.edu/iiif/2/' + id + '/full/843,/0/default.jpg'
 }
 
-function ArtItem(props: any) {
-  const [voted, setVoted] = useState<boolean>(false)
-  const [artwork, setArtwork] = useState<any>(null)
+function ArtItem({id, onRemove}: {id: number, onRemove: (id: number) => void}) {
+    const [artwork, setArtwork] = useState<any>(null)
+    const [error, setError] = useState<boolean>(false)
+    const [rating, setRating] = useState<number | null>(null)
+    const [loading, setLoading] = useState<boolean>(true)
+    const [submitted, setSubmitted] = useState<boolean>(false)
 
-  const submit = () => {
-    console.log("Submitting!")
-    /* 
-    Please have the submit button POST to https://20e2q.mocklab.io/rating with the following payload:
+    const submit = () => {
+        fetch('https://20e2q.mocklab.io/rating', {
+            method: "POST",
+            body: JSON.stringify({
+                id,
+                rating
+            })
+        }).then(r => {
+            if (r.ok) {
+                toast(`Submitted review for ${artwork?.data.title}`)
+                setSubmitted(true)
+            } else {
+                toast("ERROR: server error on review submission :<", )
+            }
+        })
+    };
 
-      {
-        "id": {#id},
-        "rating": {#rating}
-      }
+    useEffect(() => {
+        getArtwork(id).then(async (r) => {
+            if (r.ok) {
+                const json = await r.json()
+                setArtwork(json)
+            } else {
+                setError(true)
+            }
+        }).finally(() => {
+            setLoading(false)
+        })
+    }, [id]);
 
-    Where id is the artwork's id, and rating is the selected rating.
+    let CardBody;
 
-    The endpoint should return the following:
+    if (error) {
+        CardBody = <>
+            <Tooltip onClick={() => onRemove(id)} style={{float: 'right', alignSelf: "end"}} title="Remove Artwork">
+                <CloseIcon/>
+            </Tooltip>
+            <h2>There was an error!</h2>
 
-    {
-      "message": "Success"
+            <p>There was an error loading this image, try checking the ID...</p>
+        </>
+    } else if (loading) {
+        CardBody = (<CircularProgress style={{marginTop: "34%"}}/>)
+    } else {
+        CardBody =(<>
+            <img
+                src={artwork != null ? getImageUrl(artwork?.data?.image_id) : ""}/>
+
+            <div className="artCardContent">
+                <div className="ratingForm">
+                    <Tooltip onClick={() => onRemove(id)} style={{float: 'right', alignSelf: "end"}} title="Remove Artwork">
+                        <CloseIcon/>
+                    </Tooltip>
+
+                    <h2>{artwork?.data.title}</h2>
+                    <h3>{artwork?.data.artist_title}</h3>
+                </div>
+
+                <div className="ratingFormStars">
+                    {!submitted && (<>
+                        <Rating data-testid="artRatingScale" onChange={(event, value) => {
+                            console.log(value)
+                            setRating(value)
+                        }}></Rating>
+                        <Button data-testid="submitArtRating" disabled={rating === null}
+                                onClick={submit}>Submit</Button>
+                    </>)}
+                </div>
+
+            </div>
+
+        </>)
     }
-  */
-    return () => {};
-  };
 
-  if (props.disabled)
-  {
-    return <></>;
-  }
-  
-  useEffect( () => {
-    getArtwork(props.id).then(r => r.json()).then(json => setArtwork(json))
-  }, []);
+    return (
+        <Card className="artCard">
+            {CardBody}
+        </Card>
+    )
+}
 
-  return (
-    <div className="item">
-        <h2>{artwork && artwork.data.title}</h2>
-        <h3>{artwork && artwork.data.artist_title}</h3>
-        <img style={ { width: 100 } } src={artwork != null ? getImageUrl(artwork.data.image_id) : ""} />
-        <p>Rating: {artwork && artwork.rating}</p>
-        <button onClick={() => { artwork.rating = 1; setVoted(true); }}>1</button>
-        <button onClick={() => { artwork.rating = 2; setVoted(true); }}>2</button>
-        <button onClick={() => { artwork.rating = 3; setVoted(true); }}>3</button>
-        <button onClick={() => { artwork.rating = 4; setVoted(true); }}>4</button>
-        <button onClick={() => { artwork.rating = 5; setVoted(true); }}>5</button>
-        <button onClick={submit()}>Submit</button>
-    </div>
-  )
+function AddArtItem({onSubmit}: any) {
+    const [imageId, setImageId] = useState<string>("")
+
+
+    return (
+        <Card className="artCard">
+            <h3>Add Artwork!</h3>
+            <ImageSearch className="imageSearchIcon"/>
+            <Input type="number" onChange={(event) => setImageId(event.target.value)}
+                   placeholder="Enter artID here!"></Input>
+            <Button onClick={() => onSubmit(imageId)}>Submit!</Button>
+        </Card>)
+
 }
 
 function App() {
-  const [arts, setArts] = useState<any>([])
-  
-  const a = [
-    { id: 27992, disabled: false },
-    { id: 27998, disabled: false },
-    { id: 27999, disabled: false },
-    { id: 27997, disabled: true },
-    { id: 27993, disabled: false },
-  ];
+    const [artworkIds, setArtworkIds] = useState([
+        27992,
+        27998,
+        27999,
+        27997,
+        27993,
+        27994,
+    ]);
 
-  useEffect(() => {
-    const temp = []
-    for (let i = 0; i < a.length; i++) {
-      temp.push(<ArtItem id={a[i].id} disabled={a[i].disabled}></ArtItem>)
+    const removeArt = (id: number) => {
+        setArtworkIds(artworkIds => _.without(artworkIds, id))
+        toast(`Removed artwork ${id}`)
     }
-    setArts(temp)
-  }, [setArts])
 
-  return (
-    <div className="App">
-      <h1>Art Rater</h1>
-      {arts}
-    </div>
-  );
+    return (
+        <div className="App">
+            <div><Toaster/></div>
+            <h1>Art Rater</h1>
+            <div className="artContainer">
+                <AddArtItem onSubmit={(id: string) => {
+                    setArtworkIds(artworkIds => [Number(id), ...artworkIds])
+                }}></AddArtItem>
+
+                {artworkIds.map(id => <ArtItem key={id} id={id} onRemove={removeArt} />)}
+            </div>
+        </div>
+    );
 }
 
 export {App, ArtItem};
