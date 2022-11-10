@@ -1,3 +1,4 @@
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,6 +6,10 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.websiteTitle {
+  font-family: "Island Moments", Serif;
 }
 
 code {
@@ -15,6 +20,7 @@ code {
 .artContainer {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .artCard {
@@ -37,22 +43,22 @@ code {
   font-size: 10em !important;
 }
 
-.ratingForm {
+.artInfo {
   display: flex;
   flex-direction: column;
   padding: 5px 10px;
   align-items: center;
 }
 
-.ratingForm svg {
+.artInfo svg {
   cursor: pointer;
 }
 
-.ratingForm > h2 {
+.artInfo > h2 {
   font-size: 100%;
 }
 
-.ratingForm > h3 {
+.artInfo > h3 {
   font-size: 75%;
 }
 
@@ -68,4 +74,12 @@ code {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+.newArtCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
 }

@@ -1,6 +1,6 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.css';
-import {Button, Card, CardHeader, CircularProgress, Input, Rating, Snackbar, Tooltip} from "@mui/material";
+import {Button, Card, CircularProgress, Input, Rating, Tooltip} from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import {ImageSearch} from "@mui/icons-material";
 import _ from "lodash";
@@ -70,7 +70,7 @@ function ArtItem({id, onRemove}: {id: number, onRemove: (id: number) => void}) {
                 src={artwork != null ? getImageUrl(artwork?.data?.image_id) : ""}/>
 
             <div className="artCardContent">
-                <div className="ratingForm">
+                <div className="artInfo">
                     <Tooltip onClick={() => onRemove(id)} style={{float: 'right', alignSelf: "end"}} title="Remove Artwork">
                         <CloseIcon/>
                     </Tooltip>
@@ -105,14 +105,21 @@ function ArtItem({id, onRemove}: {id: number, onRemove: (id: number) => void}) {
 function AddArtItem({onSubmit}: any) {
     const [imageId, setImageId] = useState<string>("")
 
+    const submit = () => {
+        onSubmit(imageId)
+        setImageId("")
+    }
+
 
     return (
         <Card className="artCard">
-            <h3>Add Artwork!</h3>
-            <ImageSearch className="imageSearchIcon"/>
-            <Input type="number" onChange={(event) => setImageId(event.target.value)}
-                   placeholder="Enter artID here!"></Input>
-            <Button onClick={() => onSubmit(imageId)}>Submit!</Button>
+            <div className="newArtCard">
+                <h3>Add Artwork!</h3>
+                <ImageSearch className="imageSearchIcon"/>
+                <Input type="number" value={imageId} onChange={(event) => setImageId(event.target.value)}
+                       placeholder="Enter artID here!"></Input>
+                <Button onClick={submit}>Submit!</Button>
+            </div>
         </Card>)
 
 }
@@ -135,7 +142,10 @@ function App() {
     return (
         <div className="App">
             <div><Toaster/></div>
-            <h1>Art Rater</h1>
+
+            <h1 className="websiteTitle">Art Rater</h1>
+            <h2 className="websiteTitle">Real Artwork, Your Thoughts, Nobody Listening</h2>
+
             <div className="artContainer">
                 <AddArtItem onSubmit={(id: string) => {
                     setArtworkIds(artworkIds => [Number(id), ...artworkIds])
