@@ -9,8 +9,9 @@ test('has title', () => {
   expect(title).toBeInTheDocument();
 });
 
-test('for an art item, submit button is disabled until a rating is selected', () => {
+test('for an art item, submit button is disabled until a rating is selected', async () => {
   render(<ArtItem id={27992} onRemove={_.noop}/>);
+  await waitFor(() => expect(screen.getByTestId('artRatingScale')))
 
   const submitButton = screen.getByTestId('submitArtRating')
   expect(submitButton.hasAttribute('disabled')).toBeTruthy()
