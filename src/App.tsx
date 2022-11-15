@@ -120,9 +120,11 @@ function AddArtItem({onSubmit}: any) {
             <div className="newArtCard">
                 <h3>Add Artwork!</h3>
                 <ImageSearch className="imageSearchIcon"/>
-                <Input type="number" value={imageId} onChange={(event) => setImageId(event.target.value)}
-                       placeholder="Enter artID here!"></Input>
-                <Button onClick={submit}>Submit!</Button>
+                <div className="ratingFormStars">
+                    <Input type="number" value={imageId} onChange={(event) => setImageId(event.target.value)}
+                        placeholder="Enter artID here!"></Input>
+                    <Button onClick={submit}>Submit!</Button>
+                </div>
             </div>
         </Card>)
 
@@ -143,6 +145,17 @@ function App() {
         toast(`Removed artwork ${id}`)
     }
 
+    const addArt = (id: number) => {
+        const idNum = Number(id)
+
+        if (artworkIds.includes(idNum)) {
+            toast("Artwork already in collection!")
+            return;
+        }
+
+        setArtworkIds(artworkIds => [idNum, ...artworkIds])
+    }
+
     return (
         <div className="App">
             <div><Toaster/></div>
@@ -151,9 +164,7 @@ function App() {
             <h2 className="websiteTitle">Real Artwork, Your Thoughts, Nobody Listening</h2>
 
             <div className="artContainer">
-                <AddArtItem onSubmit={(id: string) => {
-                    setArtworkIds(artworkIds => [Number(id), ...artworkIds])
-                }}></AddArtItem>
+                <AddArtItem onSubmit={addArt}></AddArtItem>
 
                 {artworkIds.map(id => <ArtItem key={id} id={id} onRemove={removeArt}/>)}
             </div>
