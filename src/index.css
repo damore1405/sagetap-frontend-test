@@ -26,6 +26,7 @@ code {
 .artCard {
   margin: 10px;
   width: 18em;
+  height: 450px;
 }
 
 .artCard img {
@@ -82,4 +83,8 @@ code {
   justify-content: space-between;
   align-items: center;
   height: 100%;
+}
+
+.errorCardBody {
+  margin: 100px 10px;
 }

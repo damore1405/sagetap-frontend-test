@@ -14,7 +14,7 @@ function getImageUrl(id: string) {
     return 'https://www.artic.edu/iiif/2/' + id + '/full/843,/0/default.jpg'
 }
 
-function ArtItem({id, onRemove}: {id: number, onRemove: (id: number) => void}) {
+function ArtItem({id, onRemove}: { id: number, onRemove: (id: number) => void }) {
     const [artwork, setArtwork] = useState<any>(null)
     const [error, setError] = useState<boolean>(false)
     const [rating, setRating] = useState<number | null>(null)
@@ -33,7 +33,7 @@ function ArtItem({id, onRemove}: {id: number, onRemove: (id: number) => void}) {
                 toast(`Submitted review for ${artwork?.data.title}`)
                 setSubmitted(true)
             } else {
-                toast("ERROR: server error on review submission :<", )
+                toast("ERROR: server error on review submission :<",)
             }
         })
     };
@@ -58,20 +58,23 @@ function ArtItem({id, onRemove}: {id: number, onRemove: (id: number) => void}) {
             <Tooltip onClick={() => onRemove(id)} style={{float: 'right', alignSelf: "end"}} title="Remove Artwork">
                 <CloseIcon/>
             </Tooltip>
-            <h2>There was an error!</h2>
 
-            <p>There was an error loading this image, try checking the ID...</p>
+            <div className="errorCardBody">
+                    <h2>There was an error!</h2>
+                    <p>There was an error loading this image, try checking the ID...</p>
+            </div>
         </>
     } else if (loading) {
         CardBody = (<CircularProgress style={{marginTop: "34%"}}/>)
     } else {
-        CardBody =(<>
+        CardBody = (<>
             <img
                 src={artwork != null ? getImageUrl(artwork?.data?.image_id) : ""}/>
 
             <div className="artCardContent">
                 <div className="artInfo">
-                    <Tooltip onClick={() => onRemove(id)} style={{float: 'right', alignSelf: "end"}} title="Remove Artwork">
+                    <Tooltip onClick={() => onRemove(id)} style={{float: 'right', alignSelf: "end"}}
+                             title="Remove Artwork">
                         <CloseIcon/>
                     </Tooltip>
 
@@ -81,10 +84,9 @@ function ArtItem({id, onRemove}: {id: number, onRemove: (id: number) => void}) {
 
                 <div className="ratingFormStars">
                     {!submitted && (<>
-                        <Rating data-testid="artRatingScale" onChange={(event, value) => {
-                            console.log(value)
+                        <Rating data-testid="artRatingScale" onChange={(event, value) =>
                             setRating(value)
-                        }}></Rating>
+                        }></Rating>
                         <Button data-testid="submitArtRating" disabled={rating === null}
                                 onClick={submit}>Submit</Button>
                     </>)}
@@ -106,6 +108,8 @@ function AddArtItem({onSubmit}: any) {
     const [imageId, setImageId] = useState<string>("")
 
     const submit = () => {
+        if (!imageId.length) return
+
         onSubmit(imageId)
         setImageId("")
     }
@@ -151,7 +155,7 @@ function App() {
                     setArtworkIds(artworkIds => [Number(id), ...artworkIds])
                 }}></AddArtItem>
 
-                {artworkIds.map(id => <ArtItem key={id} id={id} onRemove={removeArt} />)}
+                {artworkIds.map(id => <ArtItem key={id} id={id} onRemove={removeArt}/>)}
             </div>
         </div>
     );

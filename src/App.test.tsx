@@ -49,6 +49,9 @@ test('for an art item, clicking submit POSTs update, displays a toast success me
   )
 
   await act(() => submitButton.click())
+
+  expect(screen.queryByTestId('submitArtRating')).toBeNull()
+  expect(screen.queryByTestId('artRatingScale')).toBeNull()
   expect(fetch).toHaveBeenCalledTimes(1)
   expect(fetch).toHaveBeenCalledWith('https://20e2q.mocklab.io/rating', {
     method: "POST",
@@ -57,4 +60,5 @@ test('for an art item, clicking submit POSTs update, displays a toast success me
       rating: 4
     })
   })
+
 });
